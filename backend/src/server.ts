@@ -47,10 +47,11 @@ app.use('/api/register', registerRoutes);
 app.use('/api/sessions', sessionRoutes);
 
 // 🌐 Serve Frontend in Production
-const __rootPath = path.resolve();
+// In production, this file is in backend/dist/server.js
 const possiblePaths = [
-  path.join(__rootPath, '..', 'frontend', 'dist'), // Relative if started from backend/
-  path.join(__rootPath, 'frontend', 'dist'),     // Relative if started from root
+  path.join(__dirname, '..', '..', 'frontend', 'dist'), // Relative to backend/dist/
+  path.join(process.cwd(), '..', 'frontend', 'dist'),   // Relative to backend/
+  path.join(process.cwd(), 'frontend', 'dist'),        // Relative to root
   path.resolve('/opt/render/project/src/frontend/dist') // Absolute path on Render
 ];
 
@@ -70,7 +71,9 @@ if (process.env.NODE_ENV === 'production' && frontendPath) {
     res.sendFile(path.join(frontendPath, 'index.html'));
   });
 } else if (process.env.NODE_ENV === 'production') {
-  console.error('❌ Could not find frontend dist folder in any of:', possiblePaths);
+  console.error('❌ FATAL: Could not find frontend dist folder in any of:', possiblePaths);
+  console.log('Current __dirname:', __dirname);
+  console.log('Current process.cwd():', process.cwd());
 } else {
   app.get('/', (req, res) => {
     res.send('API is running...');
