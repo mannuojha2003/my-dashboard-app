@@ -164,11 +164,11 @@ export default function EntriesTable({ type, entries, units, userRole, selectedU
   return (
     <div className="p-2 space-y-4">
       {/* 🔍 Search Section */}
-      <div className="flex flex-wrap gap-2">
+      <div className="flex flex-wrap items-center gap-3 bg-white dark:bg-gray-800 p-4 rounded-xl shadow-sm border dark:border-gray-700">
         <select
           value={searchUnit}
           onChange={(e) => setSearchUnit(e.target.value)}
-          className="border rounded p-1 bg-white dark:bg-gray-700 dark:border-gray-700 dark:text-white"
+          className="border rounded-lg px-3 py-2 text-sm bg-gray-50 dark:bg-gray-700 dark:border-gray-600 dark:text-white focus:ring-2 focus:ring-blue-500 outline-none min-w-[140px]"
         >
           <option value="All">All Units</option>
           {units.map((unit) => (
@@ -177,7 +177,8 @@ export default function EntriesTable({ type, entries, units, userRole, selectedU
             </option>
           ))}
         </select>
-        <div className="relative">
+        
+        <div className="relative flex-1 min-w-[200px]">
           <input
             value={searchNo}
             onChange={(e) => {
@@ -185,11 +186,13 @@ export default function EntriesTable({ type, entries, units, userRole, selectedU
               setShowLocalResults(true);
             }}
             onFocus={() => setShowLocalResults(true)}
-            placeholder={type === 'Sale' || type === 'Purchase' ? "Search Unit/Company" : "Quotation/Invoice No"}
-            className="border rounded p-1 bg-white dark:bg-gray-700 dark:border-gray-700 dark:text-white w-48"
+            placeholder={type === 'Sale' || type === 'Purchase' ? "Search Unit/Company" : "No. Search..."}
+            className="w-full border rounded-lg pl-10 pr-4 py-2 text-sm bg-gray-50 dark:bg-gray-700 dark:border-gray-600 dark:text-white focus:ring-2 focus:ring-blue-500 outline-none"
           />
+          <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
+          
           {showLocalResults && searchNo.trim().length > 0 && (
-            <div className="absolute top-full left-0 z-50 w-full bg-white dark:bg-gray-800 border dark:border-gray-700 rounded shadow-lg mt-1 max-h-40 overflow-auto">
+            <div className="absolute top-full left-0 z-50 w-full bg-white dark:bg-gray-800 border dark:border-gray-700 rounded-xl shadow-2xl mt-2 max-h-60 overflow-auto animate-slideDown">
               {entries
                 .filter(e => {
                   const term = searchNo.toLowerCase();
@@ -205,54 +208,39 @@ export default function EntriesTable({ type, entries, units, userRole, selectedU
                 .map((e, idx) => (
                   <div 
                     key={idx}
-                    className="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 cursor-pointer text-xs border-b dark:border-gray-700 last:border-0 dark:text-white"
+                    className="p-3 hover:bg-blue-50 dark:hover:bg-blue-900/20 cursor-pointer text-xs border-b dark:border-gray-700 last:border-0 dark:text-white transition-colors"
                     onClick={() => {
                       setSearchNo(e.unit || e.quotation_no || e.invoice_no || '');
                       setShowLocalResults(false);
                     }}
                   >
-                    <div className="font-bold text-blue-600 dark:text-blue-400">
+                    <div className="font-black text-blue-600 dark:text-blue-400">
                       {type === 'Sale' || type === 'Purchase' ? e.unit : (e.quotation_no || e.invoice_no)}
                     </div>
-                    <div className="text-[10px] text-gray-500">
-                      {type === 'Sale' || type === 'Purchase' ? (e.buying_company || e.selling_company) : e.unit} - {formatDate(e.date)}
+                    <div className="text-[10px] text-gray-500 dark:text-gray-400 mt-1">
+                      {type === 'Sale' || type === 'Purchase' ? (e.buying_company || e.selling_company) : e.unit} • {formatDate(e.date)}
                     </div>
                   </div>
                 ))}
-              {entries.filter(e => {
-                const term = searchNo.toLowerCase();
-                if (type === 'Sale' || type === 'Purchase') {
-                  return (e.unit?.toLowerCase().includes(term) ?? false);
-                }
-                return (e.quotation_no?.toLowerCase().includes(term) ?? false) ||
-                       (e.invoice_no?.toLowerCase().includes(term) ?? false);
-              }).length === 0 && (
-                <div className="p-2 text-gray-400 text-xs italic text-center">No matches</div>
-              )}
             </div>
           )}
         </div>
-        <input
-          type="date"
-          value={fromDate}
-          onChange={(e) => setFromDate(e.target.value)}
-          className="border rounded p-1 bg-white dark:bg-gray-700 dark:border-gray-700 dark:text-white"
-        />
-        <input
-          type="date"
-          value={toDate}
-          onChange={(e) => setToDate(e.target.value)}
-          className="border rounded p-1 bg-white dark:bg-gray-700 dark:border-gray-700 dark:text-white"
-        />
-        <button
-          onClick={() => {
-            // Filters are reactive
-          }}
-          className="bg-blue-600 text-white px-3 py-1 rounded flex items-center gap-1"
-          type="button"
-        >
-          <Search size={14} /> Search
-        </button>
+
+        <div className="flex items-center gap-2 w-full sm:w-auto">
+          <input
+            type="date"
+            value={fromDate}
+            onChange={(e) => setFromDate(e.target.value)}
+            className="flex-1 sm:flex-none border rounded-lg px-3 py-2 text-sm bg-gray-50 dark:bg-gray-700 dark:border-gray-600 dark:text-white focus:ring-2 focus:ring-blue-500 outline-none"
+          />
+          <span className="text-gray-400">→</span>
+          <input
+            type="date"
+            value={toDate}
+            onChange={(e) => setToDate(e.target.value)}
+            className="flex-1 sm:flex-none border rounded-lg px-3 py-2 text-sm bg-gray-50 dark:bg-gray-700 dark:border-gray-600 dark:text-white focus:ring-2 focus:ring-blue-500 outline-none"
+          />
+        </div>
       </div>
 
       {/* Click outside to close local results */}
@@ -263,198 +251,223 @@ export default function EntriesTable({ type, entries, units, userRole, selectedU
         />
       )}
 
-      <table className="min-w-full border text-sm bg-white dark:bg-gray-900 text-gray-900 dark:text-white">
-        <thead className="bg-gray-100 dark:bg-gray-700">
-          <tr>
-            {tableHeaders[type].map((h) => (
-              <th key={h} className={`p-2 border ${h === 'description' ? 'w-1/3 min-w-[300px]' : ''}`}>
-                {h.replace(/_/g, ' ')}
-              </th>
-            ))}
-            <th className="p-2 border">Actions</th>
-          </tr>
-        </thead>
-        <tbody>
-          {/* ➕ New Entry Row */}
-          {(userRole === 'admin' || userRole === 'employee') && (
-            <tr className="bg-yellow-50 dark:bg-gray-800">
-              {tableHeaders[type].map((key) => (
-                <td key={key} className="border p-1">
-                  {key === 'total' ? (
-                    <span>{newEntry.total ?? '0.00'}</span>
-                  ) : key === 'unit' ? (
-                    <select
-                      value={newEntry.unit ?? ''}
-                      onChange={(e) => handleNewChange('unit', e.target.value)}
-                      className="border p-1 bg-white dark:bg-gray-700 dark:border-gray-600 dark:text-white w-full"
-                    >
-                      <option value="">Select</option>
-                      {units.map((unit) => (
-                        <option key={unit._id} value={unit.name}>
-                          {unit.name}
-                        </option>
-                      ))}
-                    </select>
-                  ) : key === 'company_name' ? (
-                    <select
-                      value={newEntry.company_name ?? ''}
-                      onChange={(e) => handleNewChange('company_name', e.target.value)}
-                      className="border p-1 bg-white dark:bg-gray-700 dark:border-gray-600 dark:text-white w-full"
-                    >
-                      <option value="">Select</option>
-                      {COMPANY_OPTIONS.map((c) => (
-                        <option key={c} value={c}>
-                          {c}
-                        </option>
-                      ))}
-                    </select>
-                  ) : key === 'description' ? (
-                    <div className="space-y-1">
-                      {(newEntry.description || []).map((item, i) => (
-                        <div key={i} className="flex gap-1">
-                          <input
-                            value={item.item}
-                            onChange={(e) => handleNewItemChange(i, 'item', e.target.value)}
-                            className="w-16 border p-1 bg-white dark:bg-gray-700 dark:border-gray-600 dark:text-white"
-                            placeholder="Item"
-                          />
-                          <input
-                            value={item.denomination}
-                            onChange={(e) => handleNewItemChange(i, 'denomination', e.target.value)}
-                            className="w-16 border p-1 bg-white dark:bg-gray-700 dark:border-gray-600 dark:text-white"
-                            placeholder="Denom"
-                          />
-                          <input
-                            value={item.quantity}
-                            onChange={(e) => handleNewItemChange(i, 'quantity', e.target.value)}
-                            className="w-12 border p-1 bg-white dark:bg-gray-700 dark:border-gray-600 dark:text-white"
-                            placeholder="Qty"
-                          />
-                          <input
-                            value={item.rate}
-                            onChange={(e) => handleNewItemChange(i, 'rate', e.target.value)}
-                            className="w-14 border p-1 bg-white dark:bg-gray-700 dark:border-gray-600 dark:text-white"
-                            placeholder="Rate"
-                          />
-                        </div>
-                      ))}
-                      <button onClick={handleAddRow} className="text-blue-500 text-xs">
-                        + Add
-                      </button>
-                    </div>
-                  ) : (
-                    <input
-                      value={newEntry[key] ?? ''}
-                      onChange={(e) => handleNewChange(key, e.target.value)}
-                      className="w-full border p-1 bg-white dark:bg-gray-700 dark:border-gray-600 dark:text-white"
-                    />
-                  )}
-                </td>
-              ))}
-              <td className="border p-1">
-                <button onClick={handleAdd} title="Add Entry">
-                  <Plus size={16} className="text-green-600" />
-                </button>
-              </td>
-            </tr>
-          )}
-
-          {/* 🔄 Display Filtered Entries */}
-          {visibleRows.length > 0 ? (
-            visibleRows.map((row, idx) => (
-              <tr key={row._id || idx}>
-                {tableHeaders[type].map((key) => (
-                  <td key={key} className="border p-1">
-                    {editIndex === idx ? (
-                      key === 'description' ? (
-                        <div className="space-y-1">
-                          {(editData.description || []).map((item, i) => (
+      {/* 📊 Table Container with Horizontal Scroll */}
+      <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border dark:border-gray-700 overflow-hidden">
+        <div className="overflow-x-auto">
+          <table className="w-full text-left text-sm border-collapse">
+            <thead className="bg-gray-50 dark:bg-gray-700/50 border-b dark:border-gray-700">
+              <tr>
+                {tableHeaders[type].map((h) => (
+                  <th key={h} className={`p-4 font-black text-xs uppercase tracking-wider text-gray-500 dark:text-gray-400 ${h === 'description' ? 'min-w-[300px]' : 'whitespace-nowrap'}`}>
+                    {h.replace(/_/g, ' ')}
+                  </th>
+                ))}
+                <th className="p-4 font-black text-xs uppercase tracking-wider text-gray-500 dark:text-gray-400 text-center">Actions</th>
+              </tr>
+            </thead>
+            <tbody className="divide-y dark:divide-gray-700">
+              {/* ➕ New Entry Row */}
+              {(userRole === 'admin' || userRole === 'employee') && (
+                <tr className="bg-blue-50/30 dark:bg-blue-900/10">
+                  {tableHeaders[type].map((key) => (
+                    <td key={key} className="p-3">
+                      {key === 'total' ? (
+                        <span className="font-black text-blue-600 dark:text-blue-400">{newEntry.total ?? '0.00'}</span>
+                      ) : key === 'unit' ? (
+                        <select
+                          value={newEntry.unit ?? ''}
+                          onChange={(e) => handleNewChange('unit', e.target.value)}
+                          className="w-full border rounded-lg p-2 text-xs bg-white dark:bg-gray-800 dark:border-gray-600 dark:text-white"
+                        >
+                          <option value="">Select</option>
+                          {units.map((unit) => (
+                            <option key={unit._id} value={unit.name}>
+                              {unit.name}
+                            </option>
+                          ))}
+                        </select>
+                      ) : key === 'company_name' ? (
+                        <select
+                          value={newEntry.company_name ?? ''}
+                          onChange={(e) => handleNewChange('company_name', e.target.value)}
+                          className="w-full border rounded-lg p-2 text-xs bg-white dark:bg-gray-800 dark:border-gray-600 dark:text-white"
+                        >
+                          <option value="">Select</option>
+                          {COMPANY_OPTIONS.map((c) => (
+                            <option key={c} value={c}>
+                              {c}
+                            </option>
+                          ))}
+                        </select>
+                      ) : key === 'description' ? (
+                        <div className="space-y-2">
+                          {(newEntry.description || []).map((item, i) => (
                             <div key={i} className="flex gap-1">
                               <input
                                 value={item.item}
-                                onChange={(e) => handleEditItemChange(i, 'item', e.target.value)}
-                                className="w-16 border p-1 bg-white dark:bg-gray-700 dark:border-gray-600 dark:text-white"
+                                onChange={(e) => handleNewItemChange(i, 'item', e.target.value)}
+                                className="w-20 border rounded p-1.5 text-xs bg-white dark:bg-gray-800 dark:border-gray-600 dark:text-white"
+                                placeholder="Item"
                               />
                               <input
                                 value={item.denomination}
-                                onChange={(e) => handleEditItemChange(i, 'denomination', e.target.value)}
-                                className="w-16 border p-1 bg-white dark:bg-gray-700 dark:border-gray-600 dark:text-white"
+                                onChange={(e) => handleNewItemChange(i, 'denomination', e.target.value)}
+                                className="w-16 border rounded p-1.5 text-xs bg-white dark:bg-gray-800 dark:border-gray-600 dark:text-white"
+                                placeholder="Deno"
                               />
                               <input
                                 value={item.quantity}
-                                onChange={(e) => handleEditItemChange(i, 'quantity', e.target.value)}
-                                className="w-12 border p-1 bg-white dark:bg-gray-700 dark:border-gray-600 dark:text-white"
+                                onChange={(e) => handleNewItemChange(i, 'quantity', e.target.value)}
+                                className="w-12 border rounded p-1.5 text-xs bg-white dark:bg-gray-800 dark:border-gray-600 dark:text-white"
+                                placeholder="Qty"
                               />
                               <input
                                 value={item.rate}
-                                onChange={(e) => handleEditItemChange(i, 'rate', e.target.value)}
-                                className="w-14 border p-1 bg-white dark:bg-gray-700 dark:border-gray-600 dark:text-white"
+                                onChange={(e) => handleNewItemChange(i, 'rate', e.target.value)}
+                                className="w-16 border rounded p-1.5 text-xs bg-white dark:bg-gray-800 dark:border-gray-600 dark:text-white"
+                                placeholder="Rate"
                               />
                             </div>
                           ))}
+                          <button onClick={handleAddRow} className="flex items-center gap-1 text-blue-600 text-[10px] font-bold uppercase tracking-tighter hover:underline">
+                            <Plus size={10} /> Add Item
+                          </button>
                         </div>
                       ) : (
                         <input
-                          value={editData[key] ?? ''}
-                          onChange={(e) => handleEditChange(key, e.target.value)}
-                          className="w-full border p-1 bg-white dark:bg-gray-700 dark:border-gray-600 dark:text-white"
+                          value={newEntry[key] ?? ''}
+                          onChange={(e) => handleNewChange(key, e.target.value)}
+                          className="w-full border rounded p-2 text-xs bg-white dark:bg-gray-800 dark:border-gray-600 dark:text-white"
+                          placeholder={key.replace(/_/g, ' ')}
                         />
-                      )
-                    ) : key === 'description' ? (
-                      <ul className="text-xs">
-                        {(row.description || []).map((d, i) => (
-                          <li key={i}>
-                            {d.item} - {d.denomination} - {d.quantity} × {d.rate}
-                          </li>
-                        ))}
-                      </ul>
-                    ) : key === 'date' ? (
-                      formatDate(row.date)
-                    ) : (
-                      // @ts-ignore
-                      row[key]
-                    )}
+                      )}
+                    </td>
+                  ))}
+                  <td className="p-3 text-center">
+                    <button 
+                      onClick={handleAdd} 
+                      className="p-2 bg-green-500 hover:bg-green-600 text-white rounded-lg shadow-lg shadow-green-500/20 transition-all active:scale-90"
+                      title="Add Entry"
+                    >
+                      <Plus size={18} />
+                    </button>
                   </td>
-                ))}
-                <td className="border p-1">
-                  {editIndex === idx ? (
-                    <div className="flex gap-1">
-                      <button onClick={handleSave} title="Save changes">
-                        <Save size={16} className="text-green-600" />
-                      </button>
-                      <button onClick={() => setEditIndex(null)} title="Cancel edit">
-                        <X size={16} className="text-gray-500" />
-                      </button>
+                </tr>
+              )}
+
+              {/* 🔄 Display Filtered Entries */}
+              {visibleRows.length > 0 ? (
+                visibleRows.map((row, idx) => (
+                  <tr key={row._id || idx} className="hover:bg-gray-50 dark:hover:bg-gray-700/30 transition-colors">
+                    {tableHeaders[type].map((key) => (
+                      <td key={key} className="p-4">
+                        {editIndex === idx ? (
+                          key === 'description' ? (
+                            <div className="space-y-2">
+                              {(editData.description || []).map((item, i) => (
+                                <div key={i} className="flex gap-1">
+                                  <input
+                                    value={item.item}
+                                    onChange={(e) => handleEditItemChange(i, 'item', e.target.value)}
+                                    className="w-20 border rounded p-1.5 text-xs bg-white dark:bg-gray-800 dark:border-gray-600 dark:text-white"
+                                  />
+                                  <input
+                                    value={item.denomination}
+                                    onChange={(e) => handleEditItemChange(i, 'denomination', e.target.value)}
+                                    className="w-16 border rounded p-1.5 text-xs bg-white dark:bg-gray-800 dark:border-gray-600 dark:text-white"
+                                  />
+                                  <input
+                                    value={item.quantity}
+                                    onChange={(e) => handleEditItemChange(i, 'quantity', e.target.value)}
+                                    className="w-12 border rounded p-1.5 text-xs bg-white dark:bg-gray-800 dark:border-gray-600 dark:text-white"
+                                  />
+                                  <input
+                                    value={item.rate}
+                                    onChange={(e) => handleEditItemChange(i, 'rate', e.target.value)}
+                                    className="w-16 border rounded p-1.5 text-xs bg-white dark:bg-gray-800 dark:border-gray-600 dark:text-white"
+                                  />
+                                </div>
+                              ))}
+                            </div>
+                          ) : (
+                            <input
+                              value={editData[key] ?? ''}
+                              onChange={(e) => handleEditChange(key, e.target.value)}
+                              className="w-full border rounded p-2 text-xs bg-white dark:bg-gray-800 dark:border-gray-600 dark:text-white"
+                            />
+                          )
+                        ) : key === 'description' ? (
+                          <div className="space-y-1">
+                            {(row.description || []).map((d, i) => (
+                              <div key={i} className="text-[11px] text-gray-600 dark:text-gray-400 flex items-center gap-2">
+                                <span className="w-1 h-1 rounded-full bg-blue-400" />
+                                <span className="font-bold text-gray-800 dark:text-gray-200">{d.item}</span>
+                                <span>{d.denomination} • {d.quantity} × {d.rate}</span>
+                              </div>
+                            ))}
+                          </div>
+                        ) : key === 'date' ? (
+                          <span className="font-medium text-gray-500 whitespace-nowrap">{formatDate(row.date)}</span>
+                        ) : key === 'total' ? (
+                          <span className="font-black text-blue-600 dark:text-blue-400">
+                            {/* @ts-ignore */}
+                            {row[key]}
+                          </span>
+                        ) : (
+                          <span className="font-bold text-gray-700 dark:text-gray-200 whitespace-nowrap">
+                            {/* @ts-ignore */}
+                            {row[key]}
+                          </span>
+                        )}
+                      </td>
+                    ))}
+                    <td className="p-4">
+                      {editIndex === idx ? (
+                        <div className="flex justify-center gap-2">
+                          <button onClick={handleSave} className="p-1.5 bg-green-100 text-green-600 rounded-lg hover:bg-green-200 transition-colors">
+                            <Save size={16} />
+                          </button>
+                          <button onClick={() => setEditIndex(null)} className="p-1.5 bg-gray-100 text-gray-600 rounded-lg hover:bg-gray-200 transition-colors">
+                            <X size={16} />
+                          </button>
+                        </div>
+                      ) : userRole === 'admin' ? (
+                        <div className="flex flex-col items-center gap-2">
+                          <div className="flex justify-center gap-2">
+                            <button onClick={() => handleEdit(idx)} className="p-1.5 bg-blue-50 text-blue-600 rounded-lg hover:bg-blue-100 transition-colors">
+                              <Pencil size={16} />
+                            </button>
+                            <button onClick={() => handleDelete(row._id!)} className="p-1.5 bg-red-50 text-red-600 rounded-lg hover:bg-red-100 transition-colors">
+                              <Trash2 size={16} />
+                            </button>
+                          </div>
+                          <div className="text-[9px] font-black uppercase tracking-tighter text-gray-400">
+                            By: {row.createdBy || 'SYSTEM'}
+                          </div>
+                        </div>
+                      ) : (
+                        <div className="text-center italic text-gray-400 text-[10px] font-bold uppercase tracking-widest">
+                          VIEW ONLY
+                        </div>
+                      )}
+                    </td>
+                  </tr>
+                ))
+              ) : (
+                <tr>
+                  <td colSpan={tableHeaders[type].length + 1} className="p-12 text-center">
+                    <div className="flex flex-col items-center gap-2 text-gray-400">
+                      <Search size={40} className="opacity-20" />
+                      <p className="font-bold text-sm">No entries found for this filter</p>
                     </div>
-                  ) : userRole === 'admin' ? (
-                    <div className="flex flex-col gap-1">
-                      <div className="flex gap-1">
-                        <button onClick={() => handleEdit(idx)} title="Edit entry">
-                          <Pencil size={16} className="text-blue-600" />
-                        </button>
-                        <button onClick={() => handleDelete(row._id!)} title="Delete entry">
-                          <Trash2 size={16} className="text-red-600" />
-                        </button>
-                      </div>
-                      <div className="text-[10px] text-gray-500 font-medium">
-                        By: {row.createdBy || 'unknown'}
-                      </div>
-                    </div>
-                  ) : (
-                    <span className="italic text-gray-400">View only</span>
-                  )}
-                </td>
-              </tr>
-            ))
-          ) : (
-            <tr>
-              <td colSpan={tableHeaders[type].length + 1} className="text-center text-gray-500 p-4">
-                No entries found or data is invalid.
-              </td>
-            </tr>
-          )}
-        </tbody>
-      </table>
+                  </td>
+                </tr>
+              )}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div> </table>
     </div>
   );
 }

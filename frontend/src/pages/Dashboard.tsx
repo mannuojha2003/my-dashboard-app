@@ -52,39 +52,43 @@ const Dashboard: React.FC = () => {
   };
 
   return (
-    <div className="flex h-screen overflow-hidden">
+    <div className="flex h-screen bg-gray-50 dark:bg-gray-900 transition-colors overflow-hidden md:overflow-visible">
       <Sidebar onSelectMenu={setSelectedMenu} onSelectUnit={setSelectedUnit} />
-      <div className="flex flex-col flex-1 overflow-auto">
+      <div className="flex flex-col flex-1 h-full overflow-hidden">
         <Header 
           selectedMenu={selectedMenu} 
           selectedUnit={selectedUnit} 
           allEntries={allEntries}
           onSearchResultClick={handleGlobalSearchResult}
         />
-        <main className="p-4 flex-1 overflow-auto bg-gray-50 dark:bg-gray-900">
-          {loading ? (
-            <div>Loading entries...</div>
-          ) : isHome ? (
-            <WelcomeScreen />
-          ) : (
-            <>
-              <button
-                onClick={() => setSelectedMenu(null)}
-                className="mb-4 px-4 py-2 bg-blue-600 text-white rounded hover:scale-105 transition-transform"
-              >
-                ← Return to Dashboard
-              </button>
+        <main className="p-4 md:p-8 flex-1 overflow-y-auto custom-scrollbar">
+          <div className="max-w-[1600px] mx-auto">
+            {loading ? (
+              <div className="flex items-center justify-center h-64">
+                <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500"></div>
+              </div>
+            ) : isHome ? (
+              <WelcomeScreen />
+            ) : (
+              <div className="animate-fadeIn">
+                <button
+                  onClick={() => setSelectedMenu(null)}
+                  className="mb-6 flex items-center gap-2 px-6 py-2.5 bg-white dark:bg-gray-800 text-blue-600 dark:text-blue-400 rounded-xl font-black text-xs uppercase tracking-widest shadow-sm hover:shadow-md transition-all active:scale-95 border dark:border-gray-700"
+                >
+                  <span className="text-lg">←</span> Back to Overview
+                </button>
 
-              <EntriesTable
-                type={selectedMenu!}
-                entries={filteredData}
-                units={units}
-                userRole={userRole}
-                selectedUnit={selectedUnit}
-                onRefresh={fetchData}
-              />
-            </>
-          )}
+                <EntriesTable
+                  type={selectedMenu!}
+                  entries={filteredData}
+                  units={units}
+                  userRole={userRole}
+                  selectedUnit={selectedUnit}
+                  onRefresh={fetchData}
+                />
+              </div>
+            )}
+          </div>
         </main>
       </div>
     </div>
