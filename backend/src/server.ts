@@ -47,12 +47,15 @@ app.use('/api/register', registerRoutes);
 app.use('/api/sessions', sessionRoutes);
 
 // 🌐 Serve Frontend in Production
-// In production, this file is in backend/dist/server.js
+console.log('--- Frontend Path Diagnostic ---');
+console.log('__dirname:', __dirname);
+console.log('process.cwd():', process.cwd());
+
 const possiblePaths = [
-  path.join(__dirname, '..', '..', 'frontend', 'dist'), // Relative to backend/dist/
-  path.join(process.cwd(), '..', 'frontend', 'dist'),   // Relative to backend/
-  path.join(process.cwd(), 'frontend', 'dist'),        // Relative to root
-  path.resolve('/opt/render/project/src/frontend/dist') // Absolute path on Render
+  path.join(__dirname, '..', '..', 'frontend', 'dist'), 
+  path.join(process.cwd(), '..', 'frontend', 'dist'),   
+  path.join(process.cwd(), 'frontend', 'dist'),        
+  path.resolve('/opt/render/project/src/frontend/dist') 
 ];
 
 let frontendPath = '';
@@ -61,24 +64,25 @@ for (const p of possiblePaths) {
     frontendPath = p;
     console.log('✅ Found frontend at:', p);
     break;
+  } else {
+    console.log('❌ Not found at:', p);
   }
 }
 
-if (process.env.NODE_ENV === 'production' && frontendPath) {
+// Serve frontend regardless of NODE_ENV as a fallback
+if (frontendPath) {
   app.use(express.static(frontendPath));
-
   app.get('*', (req, res) => {
+    if (req.url.startsWith('/api')) return res.status(404).json({ error: 'API route not found' });
     res.sendFile(path.join(frontendPath, 'index.html'));
   });
-} else if (process.env.NODE_ENV === 'production') {
-  console.error('❌ FATAL: Could not find frontend dist folder in any of:', possiblePaths);
-  console.log('Current __dirname:', __dirname);
-  console.log('Current process.cwd():', process.cwd());
 } else {
+  console.error('❌ FATAL: Could not find frontend dist folder in ANY location.');
   app.get('/', (req, res) => {
-    res.send('API is running...');
+    res.send('API is running, but Frontend is missing. Check logs for search paths.');
   });
 }
+console.log('--------------------------------');
 
 // ✅ Optional: Global error handler
 // app.use((err: any, _req: express.Request, res: express.Response, _next: express.NextFunction) => {
