@@ -3,6 +3,7 @@ import express from 'express';
 import mongoose from 'mongoose';
 import cors from 'cors';
 import path from 'path';
+import fs from 'fs';
 
 // 🛣️ Route imports
 import authRoutes from './routes/auth';
@@ -47,12 +48,29 @@ app.use('/api/sessions', sessionRoutes);
 
 // 🌐 Serve Frontend in Production
 const __rootPath = path.resolve();
-if (process.env.NODE_ENV === 'production') {
-  app.use(express.static(path.join(__rootPath, '..', 'frontend', 'dist')));
+const possiblePaths = [
+  path.join(__rootPath, '..', 'frontend', 'dist'), // Relative if started from backend/
+  path.join(__rootPath, 'frontend', 'dist'),     // Relative if started from root
+  path.resolve('/opt/render/project/src/frontend/dist') // Absolute path on Render
+];
+
+let frontendPath = '';
+for (const p of possiblePaths) {
+  if (fs.existsSync(p)) {
+    frontendPath = p;
+    console.log('✅ Found frontend at:', p);
+    break;
+  }
+}
+
+if (process.env.NODE_ENV === 'production' && frontendPath) {
+  app.use(express.static(frontendPath));
 
   app.get('*', (req, res) => {
-    res.sendFile(path.resolve(__rootPath, '..', 'frontend', 'dist', 'index.html'));
+    res.sendFile(path.join(frontendPath, 'index.html'));
   });
+} else if (process.env.NODE_ENV === 'production') {
+  console.error('❌ Could not find frontend dist folder in any of:', possiblePaths);
 } else {
   app.get('/', (req, res) => {
     res.send('API is running...');
