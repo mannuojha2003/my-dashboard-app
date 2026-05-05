@@ -46,12 +46,12 @@ app.use('/api/register', registerRoutes);
 app.use('/api/sessions', sessionRoutes);
 
 // 🌐 Serve Frontend in Production
-const __dirname = path.resolve();
+const __rootPath = path.resolve();
 if (process.env.NODE_ENV === 'production') {
-  app.use(express.static(path.join(__dirname, '/frontend/dist')));
+  app.use(express.static(path.join(__rootPath, '/frontend/dist')));
 
   app.get('*', (req, res) => {
-    res.sendFile(path.resolve(__dirname, 'frontend', 'dist', 'index.html'));
+    res.sendFile(path.resolve(__rootPath, 'frontend', 'dist', 'index.html'));
   });
 } else {
   app.get('/', (req, res) => {
@@ -70,8 +70,8 @@ mongoose
   .connect(MONGO_URI)
   .then(() => {
     console.log('✅ MongoDB connected');
-    app.listen(Number(PORT), '127.0.0.1', () => {
-      console.log(`🚀 Server running at http://127.0.0.1:${PORT}`);
+    app.listen(Number(PORT), '0.0.0.0', () => {
+      console.log(`🚀 Server running on port ${PORT}`);
     });
   })
   .catch((err) => {
