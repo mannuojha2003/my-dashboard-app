@@ -1,6 +1,7 @@
 {
   "name": "backend",
   "version": "1.0.0",
+  "type": "commonjs",
   "description": "Backend for dashboard app with Express, MongoDB, and JWT",
   "main": "dist/server.js",
   "scripts": {
