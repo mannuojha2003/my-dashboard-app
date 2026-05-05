@@ -51,6 +51,26 @@ console.log('--- Frontend Path Diagnostic ---');
 console.log('__dirname:', __dirname);
 console.log('process.cwd():', process.cwd());
 
+// 🕵️‍♂️ File System Walker for Diagnostics
+const scanDir = (dir: string, depth: number = 0) => {
+  if (depth > 2) return;
+  try {
+    const files = fs.readdirSync(dir);
+    files.forEach(file => {
+      const fullPath = path.join(dir, file);
+      const stats = fs.statSync(fullPath);
+      console.log(`${'  '.repeat(depth)}${stats.isDirectory() ? '📁' : '📄'} ${file}`);
+      if (stats.isDirectory()) scanDir(fullPath, depth + 1);
+    });
+  } catch (e) {
+    console.log(`Error scanning ${dir}:`, (e as Error).message);
+  }
+};
+
+console.log('--- 🔎 Project File Structure Scan ---');
+scanDir(path.resolve(__dirname, '..', '..')); 
+console.log('--------------------------------------');
+
 const possiblePaths = [
   path.join(__dirname, '..', '..', 'frontend', 'dist'), 
   path.join(process.cwd(), '..', 'frontend', 'dist'),   
