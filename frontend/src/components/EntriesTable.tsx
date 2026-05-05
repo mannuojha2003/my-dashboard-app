@@ -465,9 +465,7 @@ export default function EntriesTable({ type, entries, units, userRole, selectedU
               )}
             </tbody>
           </table>
-        </div>
       </div>
-    </div> </table>
     </div>
   );
 }
