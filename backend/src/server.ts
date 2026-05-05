@@ -46,63 +46,21 @@ app.use('/api/todos', todoRoutes);
 app.use('/api/register', registerRoutes);
 app.use('/api/sessions', sessionRoutes);
 
-// 🌐 Serve Frontend in Production
-console.log('--- Frontend Path Diagnostic ---');
-console.log('__dirname:', __dirname);
-console.log('process.cwd():', process.cwd());
+// 🌐 Serve Frontend
+const frontendPath = path.join(__dirname, 'public');
 
-// 🕵️‍♂️ File System Walker for Diagnostics
-const scanDir = (dir: string, depth: number = 0) => {
-  if (depth > 2) return;
-  try {
-    const files = fs.readdirSync(dir);
-    files.forEach(file => {
-      const fullPath = path.join(dir, file);
-      const stats = fs.statSync(fullPath);
-      console.log(`${'  '.repeat(depth)}${stats.isDirectory() ? '📁' : '📄'} ${file}`);
-      if (stats.isDirectory()) scanDir(fullPath, depth + 1);
-    });
-  } catch (e) {
-    console.log(`Error scanning ${dir}:`, (e as Error).message);
-  }
-};
-
-console.log('--- 🔎 Project File Structure Scan ---');
-scanDir(path.resolve(__dirname, '..', '..')); 
-console.log('--------------------------------------');
-
-const possiblePaths = [
-  path.join(__dirname, '..', '..', 'frontend', 'dist'), 
-  path.join(process.cwd(), '..', 'frontend', 'dist'),   
-  path.join(process.cwd(), 'frontend', 'dist'),        
-  path.resolve('/opt/render/project/src/frontend/dist') 
-];
-
-let frontendPath = '';
-for (const p of possiblePaths) {
-  if (fs.existsSync(p)) {
-    frontendPath = p;
-    console.log('✅ Found frontend at:', p);
-    break;
-  } else {
-    console.log('❌ Not found at:', p);
-  }
-}
-
-// Serve frontend regardless of NODE_ENV as a fallback
-if (frontendPath) {
+if (fs.existsSync(frontendPath)) {
   app.use(express.static(frontendPath));
   app.get('*', (req, res) => {
     if (req.url.startsWith('/api')) return res.status(404).json({ error: 'API route not found' });
     res.sendFile(path.join(frontendPath, 'index.html'));
   });
 } else {
-  console.error('❌ FATAL: Could not find frontend dist folder in ANY location.');
+  console.error('❌ FATAL: Could not find frontend public folder at:', frontendPath);
   app.get('/', (req, res) => {
-    res.send('API is running, but Frontend is missing. Check logs for search paths.');
+    res.send('API is running, but Frontend is missing.');
   });
 }
-console.log('--------------------------------');
 
 // ✅ Optional: Global error handler
 // app.use((err: any, _req: express.Request, res: express.Response, _next: express.NextFunction) => {
