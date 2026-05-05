@@ -48,7 +48,7 @@ app.use('/api/sessions', sessionRoutes);
 // 🌐 Serve Frontend in Production
 const __rootPath = path.resolve();
 if (process.env.NODE_ENV === 'production') {
-  app.use(express.static(path.join(__rootPath, '/frontend/dist')));
+  app.use(express.static(path.join(__rootPath, 'frontend', 'dist')));
 
   app.get('*', (req, res) => {
     res.sendFile(path.resolve(__rootPath, 'frontend', 'dist', 'index.html'));
