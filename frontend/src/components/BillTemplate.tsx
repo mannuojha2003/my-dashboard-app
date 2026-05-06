@@ -103,7 +103,7 @@ const BillTemplate = React.forwardRef<HTMLDivElement, BillTemplateProps>(({ entr
       <div className="grid grid-cols-2 gap-8 mb-8 text-sm">
         <div>
           <p className="font-bold border-b border-black inline-block mb-2">To,</p>
-          <div className="min-h-[60px]">{entry.buying_company || entry.selling_company || '___________________'}</div>
+          <div className="min-h-[60px]">{entry.client_name || entry.buying_company || entry.selling_company || '___________________'}</div>
         </div>
         <div className="text-right space-y-1">
           <p><strong>Invoice No:</strong> {entry.invoice_no || entry.quotation_no || '___________'}</p>

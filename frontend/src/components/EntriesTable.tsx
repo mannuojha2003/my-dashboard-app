@@ -17,8 +17,8 @@ interface Props {
 }
 
 const tableHeaders: Record<EntryType, string[]> = {
-  Quotation: ['quotation_no', 'company_name', 'unit', 'description', 'date', 'total'],
-  Invoice: ['invoice_no', 'company_name', 'unit', 'description', 'date', 'reference_no', 'status', 'total'],
+  Quotation: ['quotation_no', 'client_name', 'unit', 'description', 'date', 'total'],
+  Invoice: ['invoice_no', 'client_name', 'unit', 'description', 'date', 'reference_no', 'status', 'total'],
   Purchase: ['buying_company', 'selling_company', 'unit', 'amount', 'mop', 'date', 'description', 'total'],
   Sale: ['selling_company', 'buying_company', 'unit', 'amount', 'mop', 'date', 'description', 'total'],
   Expense: ['date', 'unit', 'description', 'amount', 'mop'],
@@ -307,6 +307,13 @@ export default function EntriesTable({ type, entries, units, userRole, selectedU
                             </option>
                           ))}
                         </select>
+                      ) : (key === 'client_name' || key === 'buying_company' || key === 'selling_company') && (type === 'Quotation' || type === 'Invoice') ? (
+                        <input
+                          value={newEntry[key] ?? ''}
+                          onChange={(e) => handleNewChange(key, e.target.value)}
+                          className="w-full border rounded p-2 text-xs bg-white dark:bg-gray-800 dark:border-gray-600 dark:text-white"
+                          placeholder="Client/Customer Name"
+                        />
                       ) : key === 'company_name' ? (
                         <select
                           value={newEntry.company_name ?? ''}
