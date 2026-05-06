@@ -3,8 +3,9 @@
 import React, { useEffect, useState } from 'react';
 import api from '../utils/axiosInstance';
 import { EntryType, Entry, ItemRow, Role } from '../types';
-import { Pencil, Trash2, Save, X, Plus, Search } from 'lucide-react';
+import { Pencil, Trash2, Save, X, Plus, Search, Printer, CheckCircle2, AlertCircle } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
+import BillTemplate from './BillTemplate';
 
 interface Props {
   type: EntryType;
@@ -17,7 +18,7 @@ interface Props {
 
 const tableHeaders: Record<EntryType, string[]> = {
   Quotation: ['quotation_no', 'company_name', 'unit', 'description', 'date', 'total'],
-  Invoice: ['invoice_no', 'company_name', 'unit', 'description', 'date', 'reference_no', 'total'],
+  Invoice: ['invoice_no', 'company_name', 'unit', 'description', 'date', 'reference_no', 'status', 'total'],
   Purchase: ['buying_company', 'selling_company', 'unit', 'amount', 'mop', 'date', 'description', 'total'],
   Sale: ['selling_company', 'buying_company', 'unit', 'amount', 'mop', 'date', 'description', 'total'],
   Expense: ['date', 'unit', 'description', 'amount', 'mop'],
@@ -38,6 +39,7 @@ export default function EntriesTable({ type, entries, units, userRole, selectedU
   const [fromDate, setFromDate] = useState('');
   const [toDate, setToDate] = useState('');
   const [showLocalResults, setShowLocalResults] = useState(false);
+  const [printEntry, setPrintEntry] = useState<Entry | null>(null);
 
   // Using userRole from props
 
@@ -158,6 +160,25 @@ export default function EntriesTable({ type, entries, units, userRole, selectedU
       if (onRefresh) onRefresh();
     } catch {
       alert('Delete failed');
+    }
+  };
+
+  const handlePrint = (entry: Entry) => {
+    setPrintEntry(entry);
+    // Give state a moment to update before triggering print
+    setTimeout(() => {
+      window.print();
+      setPrintEntry(null);
+    }, 100);
+  };
+
+  const toggleStatus = async (row: Entry) => {
+    const newStatus = row.status === 'Paid' ? 'Unpaid' : 'Paid';
+    try {
+      await api.put(`/api/entries/${row._id}`, { ...row, status: newStatus });
+      if (onRefresh) onRefresh();
+    } catch {
+      alert('Status update failed');
     }
   };
 
@@ -413,6 +434,18 @@ export default function EntriesTable({ type, entries, units, userRole, selectedU
                             {/* @ts-ignore */}
                             {row[key]}
                           </span>
+                        ) : key === 'status' ? (
+                          <button 
+                            onClick={() => toggleStatus(row)}
+                            className={`flex items-center gap-1 px-2 py-1 rounded-full text-[10px] font-black uppercase transition-all ${
+                              row.status === 'Paid' 
+                                ? 'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400' 
+                                : 'bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400'
+                            }`}
+                          >
+                            {row.status === 'Paid' ? <CheckCircle2 size={12} /> : <AlertCircle size={12} />}
+                            {row.status || 'Unpaid'}
+                          </button>
                         ) : (
                           <span className="font-bold text-gray-700 dark:text-gray-200 whitespace-nowrap">
                             {/* @ts-ignore */}
@@ -431,23 +464,34 @@ export default function EntriesTable({ type, entries, units, userRole, selectedU
                             <X size={16} />
                           </button>
                         </div>
-                      ) : userRole === 'admin' ? (
+                      ) : (
                         <div className="flex flex-col items-center gap-2">
                           <div className="flex justify-center gap-2">
-                            <button onClick={() => handleEdit(idx)} className="p-1.5 bg-blue-50 text-blue-600 rounded-lg hover:bg-blue-100 transition-colors">
-                              <Pencil size={16} />
-                            </button>
-                            <button onClick={() => handleDelete(row._id!)} className="p-1.5 bg-red-50 text-red-600 rounded-lg hover:bg-red-100 transition-colors">
-                              <Trash2 size={16} />
-                            </button>
+                            {(type === 'Invoice' || type === 'Quotation') && (
+                              <button 
+                                onClick={() => handlePrint(row)} 
+                                className="p-1.5 bg-purple-50 text-purple-600 rounded-lg hover:bg-purple-100 transition-colors"
+                                title="Print Bill"
+                              >
+                                <Printer size={16} />
+                              </button>
+                            )}
+                            {userRole === 'admin' && (
+                              <>
+                                <button onClick={() => handleEdit(idx)} className="p-1.5 bg-blue-50 text-blue-600 rounded-lg hover:bg-blue-100 transition-colors">
+                                  <Pencil size={16} />
+                                </button>
+                                <button onClick={() => handleDelete(row._id!)} className="p-1.5 bg-red-50 text-red-600 rounded-lg hover:bg-red-100 transition-colors">
+                                  <Trash2 size={16} />
+                                </button>
+                              </>
+                            )}
                           </div>
-                          <div className="text-[9px] font-black uppercase tracking-tighter text-gray-400">
-                            By: {row.createdBy || 'SYSTEM'}
-                          </div>
-                        </div>
-                      ) : (
-                        <div className="text-center italic text-gray-400 text-[10px] font-bold uppercase tracking-widest">
-                          VIEW ONLY
+                          {userRole === 'admin' && (
+                            <div className="text-[9px] font-black uppercase tracking-tighter text-gray-400">
+                              By: {row.createdBy || 'SYSTEM'}
+                            </div>
+                          )}
                         </div>
                       )}
                     </td>
@@ -466,6 +510,16 @@ export default function EntriesTable({ type, entries, units, userRole, selectedU
             </tbody>
           </table>
         </div>
+      </div>
+
+      {/* 🖨️ Hidden Print Template */}
+      <div className="hidden print:block fixed inset-0 z-[9999] bg-white">
+        {printEntry && (
+          <BillTemplate 
+            entry={printEntry} 
+            company={printEntry.company_name || selectedUnit} 
+          />
+        )}
       </div>
     </div>
   );

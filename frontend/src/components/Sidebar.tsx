@@ -1,7 +1,7 @@
 // src/components/Sidebar.tsx
 import React, { useState } from 'react';
 import { EntryType } from '../types';
-import { Menu, X, Users, MapPin, PlusCircle } from 'lucide-react';
+import { Menu, X, Users, MapPin, PlusCircle, CreditCard } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import { useNavigate } from 'react-router-dom';
 import api from '../utils/axiosInstance';
@@ -139,6 +139,16 @@ const Sidebar: React.FC<SidebarProps> = ({ onSelectMenu, onSelectUnit }) => {
           {/* Admin only: Employee Logs */}
           {userRole === 'admin' && (
             <div className="mt-8 pt-6 border-t dark:border-gray-700">
+              <button
+                onClick={() => {
+                  navigate('/billing');
+                  setIsOpen(false);
+                }}
+                className="w-full flex items-center gap-3 px-4 py-3 text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-xl font-bold transition mb-1"
+              >
+                <CreditCard size={18} className="text-purple-500" />
+                Billing Overview
+              </button>
               <button
                 onClick={() => {
                   navigate('/employee-logs');

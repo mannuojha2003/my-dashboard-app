@@ -52,3 +52,21 @@ body {
 .transition-spacing {
   @apply transition-all duration-300 ease-in-out;
 }
+
+/* 🖨️ Print Styles */
+@media print {
+  body * {
+    visibility: hidden;
+  }
+  .print\:block, .print\:block * {
+    visibility: visible;
+  }
+  .print\:block {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+    margin: 0;
+    padding: 0;
+  }
+}

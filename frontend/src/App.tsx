@@ -13,6 +13,7 @@ import SignInOptionPage from './pages/SignInOptionPage'; // new page to choose s
 import SignUpPage from './pages/SignUpPage';             // sign-up page
 import PendingListPage from './pages/PendingListPage';
 import EmployeeLogsPage from './pages/EmployeeLogsPage';
+import BillingPage from './pages/BillingPage';
 
 const App: React.FC = () => {
   return (
@@ -78,6 +79,14 @@ const App: React.FC = () => {
             element={
               <ProtectedRoute>
                 <EmployeeLogsPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/billing"
+            element={
+              <ProtectedRoute>
+                <BillingPage />
               </ProtectedRoute>
             }
           />

@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Internal Business Dashboard - Project Report</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #2563eb;
+            --text-dark: #1f2937;
+            --text-light: #6b7280;
+            --border: #e5e7eb;
+            --bg-light: #f9fafb;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, sans-serif;
+            line-height: 1.6;
+            color: var(--text-dark);
+            max-width: 850px;
+            margin: 0 auto;
+            padding: 40px;
+            background: #fff;
+        }
+
+        @media print {
+            body { padding: 0; }
+            .no-print { display: none; }
+        }
+
+        header {
+            border-bottom: 4px solid var(--primary);
+            padding-bottom: 20px;
+            margin-bottom: 40px;
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
+        }
+
+        .title-group h1 {
+            margin: 0;
+            font-size: 32px;
+            font-weight: 800;
+            letter-spacing: -0.025em;
+            color: var(--primary);
+        }
+
+        .status-badge {
+            background: #dcfce7;
+            color: #166534;
+            padding: 4px 12px;
+            border-radius: 99px;
+            font-size: 12px;
+            font-weight: 800;
+            text-transform: uppercase;
+        }
+
+        section {
+            margin-bottom: 32px;
+        }
+
+        h2 {
+            font-size: 20px;
+            font-weight: 800;
+            border-left: 4px solid var(--primary);
+            padding-left: 15px;
+            margin-bottom: 16px;
+            color: var(--text-dark);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        .card {
+            background: var(--bg-light);
+            padding: 20px;
+            border-radius: 12px;
+            border: 1px solid var(--border);
+        }
+
+        .card h3 {
+            margin-top: 0;
+            font-size: 16px;
+            color: var(--primary);
+        }
+
+        ul {
+            padding-left: 20px;
+        }
+
+        li {
+            margin-bottom: 8px;
+        }
+
+        .highlight-box {
+            background: #eff6ff;
+            border: 1px solid #bfdbfe;
+            padding: 24px;
+            border-radius: 16px;
+            margin-top: 40px;
+        }
+
+        .highlight-box h2 {
+            border: none;
+            padding: 0;
+            margin-bottom: 10px;
+            color: #1e40af;
+        }
+
+        footer {
+            margin-top: 60px;
+            padding-top: 20px;
+            border-top: 1px solid var(--border);
+            text-align: center;
+            font-size: 12px;
+            color: var(--text-light);
+        }
+
+        .print-btn {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            background: var(--primary);
+            color: white;
+            padding: 12px 24px;
+            border-radius: 99px;
+            text-decoration: none;
+            font-weight: 600;
+            box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3);
+            transition: transform 0.2s;
+        }
+
+        .print-btn:hover {
+            transform: translateY(-2px);
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <div class="title-group">
+            <span class="status-badge">Completed & Optimized</span>
+            <h1>Project Report</h1>
+            <p style="margin-top: 5px; color: var(--text-light);">Internal Business Operations Dashboard</p>
+        </div>
+        <div style="text-align: right; color: var(--text-light); font-size: 14px;">
+            <strong>Date:</strong> May 6, 2026
+        </div>
+    </header>
+
+    <section>
+        <h2>Project Vision</h2>
+        <p>This application was developed as a centralized management hub for modern business operations. By digitizing workflows that were previously manual, it provides a secure, real-time environment to monitor financial entries, track corporate sessions, and manage multiple business entities under one roof.</p>
+    </section>
+
+    <section>
+        <h2>Key Developments</h2>
+        <div class="grid">
+            <div class="card">
+                <h3>Scalable Architecture</h3>
+                <p>Transitioned from a static site to a full-stack application. This allows for permanent data storage and real-time updates across the system.</p>
+            </div>
+            <div class="card">
+                <h3>Multi-Entity Tracking</h3>
+                <p>Engineered a system to handle data for four distinct companies (AT, PAM, MSC, SRS) without any crossover, ensuring perfect data integrity.</p>
+            </div>
+            <div class="card">
+                <h3>Global Intelligence</h3>
+                <p>Implemented a "Search Everywhere" tool and a smart "Pending List" logic to categorize financial data for immediate action.</p>
+            </div>
+            <div class="card">
+                <h3>Premium UX/UI</h3>
+                <p>Developed a high-end interface with Dark/Light mode support and mobile responsiveness for a professional user experience.</p>
+            </div>
+        </div>
+    </section>
+
+    <section>
+        <h2>Technical Hurdles Overcome</h2>
+        <ul>
+            <li><strong>Cloud Deployment:</strong> Successfully navigated complex server configurations on Render.com to eliminate 404 errors and ensure 100% uptime.</li>
+            <li><strong>Data Security:</strong> Built a robust Role-Based Access Control (RBAC) system to protect sensitive employee logs and administrative settings.</li>
+            <li><strong>UI Layering:</strong> Resolved depth and visibility issues (z-indexing) to ensure navigation menus work seamlessly across all screen sizes.</li>
+        </ul>
+    </section>
+
+    <div class="highlight-box">
+        <h2>Lead Developer's Role</h2>
+        <p>This project was conceptualized and led by a human developer. While AI tools were utilized for technical consultation, debugging, and code optimization, the architectural vision, feature requirements, and core design were manually executed. This ensures the application is perfectly tailored to the specific needs of the business owner.</p>
+    </div>
+
+    <footer>
+        <p>Internal Business Dashboard &copy; 2026 | Generated for Professional Presentation</p>
+    </footer>
+
+    <a href="javascript:window.print()" class="print-btn no-print">Click to Save as PDF</a>
+
+</body>
+</html>
