@@ -13,6 +13,8 @@ export default function BillingPage() {
   const [units, setUnits] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
 
+  const [activeTab, setActiveTab] = useState<'Invoice' | 'Quotation'>('Invoice');
+
   const fetchData = async () => {
     try {
       setLoading(true);
@@ -34,9 +36,12 @@ export default function BillingPage() {
   }, []);
 
   const invoices = allEntries.filter(e => e.type === 'Invoice');
+  const quotations = allEntries.filter(e => e.type === 'Quotation');
+  
   const totalBilled = invoices.reduce((sum, e) => sum + Number(e.total || 0), 0);
   const totalPaid = invoices.filter(e => e.status === 'Paid').reduce((sum, e) => sum + Number(e.total || 0), 0);
   const totalPending = totalBilled - totalPaid;
+  const totalQuotations = quotations.reduce((sum, e) => sum + Number(e.total || 0), 0);
 
   return (
     <div className="flex h-screen bg-gray-50 dark:bg-gray-900 transition-colors overflow-hidden">
@@ -57,26 +62,8 @@ export default function BillingPage() {
                   <TrendingUp size={24} />
                 </div>
                 <div>
-                  <p className="text-xs font-black text-gray-400 uppercase tracking-widest">Total Billed</p>
+                  <p className="text-xs font-black text-gray-400 uppercase tracking-widest">Total Billed (Invoices)</p>
                   <h3 className="text-2xl font-black dark:text-white">₹{totalBilled.toLocaleString()}</h3>
-                </div>
-              </div>
-              <div className="bg-white dark:bg-gray-800 p-6 rounded-2xl shadow-sm border dark:border-gray-700 flex items-center gap-4">
-                <div className="p-3 bg-green-100 dark:bg-green-900/30 text-green-600 dark:text-green-400 rounded-xl">
-                  <CheckCircle size={24} />
-                </div>
-                <div>
-                  <p className="text-xs font-black text-gray-400 uppercase tracking-widest">Received</p>
-                  <h3 className="text-2xl font-black dark:text-white">₹{totalPaid.toLocaleString()}</h3>
-                </div>
-              </div>
-              <div className="bg-white dark:bg-gray-800 p-6 rounded-2xl shadow-sm border dark:border-gray-700 flex items-center gap-4">
-                <div className="p-3 bg-red-100 dark:bg-red-900/30 text-red-600 dark:text-red-400 rounded-xl">
-                  <Clock size={24} />
-                </div>
-                <div>
-                  <p className="text-xs font-black text-gray-400 uppercase tracking-widest">Outstanding</p>
-                  <h3 className="text-2xl font-black dark:text-white">₹{totalPending.toLocaleString()}</h3>
                 </div>
               </div>
               <div className="bg-white dark:bg-gray-800 p-6 rounded-2xl shadow-sm border dark:border-gray-700 flex items-center gap-4">
@@ -84,22 +71,60 @@ export default function BillingPage() {
                   <Wallet size={24} />
                 </div>
                 <div>
-                  <p className="text-xs font-black text-gray-400 uppercase tracking-widest">Efficiency</p>
-                  <h3 className="text-2xl font-black dark:text-white">
-                    {totalBilled > 0 ? ((totalPaid / totalBilled) * 100).toFixed(1) : 0}%
-                  </h3>
+                  <p className="text-xs font-black text-gray-400 uppercase tracking-widest">Total Quoted</p>
+                  <h3 className="text-2xl font-black dark:text-white">₹{totalQuotations.toLocaleString()}</h3>
+                </div>
+              </div>
+              <div className="bg-white dark:bg-gray-800 p-6 rounded-2xl shadow-sm border dark:border-gray-700 flex items-center gap-4 border-l-4 border-l-green-500">
+                <div className="p-3 bg-green-100 dark:bg-green-900/30 text-green-600 dark:text-green-400 rounded-xl">
+                  <CheckCircle size={24} />
+                </div>
+                <div>
+                  <p className="text-xs font-black text-gray-400 uppercase tracking-widest">Payments Received</p>
+                  <h3 className="text-2xl font-black dark:text-white">₹{totalPaid.toLocaleString()}</h3>
+                </div>
+              </div>
+              <div className="bg-white dark:bg-gray-800 p-6 rounded-2xl shadow-sm border dark:border-gray-700 flex items-center gap-4 border-l-4 border-l-red-500">
+                <div className="p-3 bg-red-100 dark:bg-red-900/30 text-red-600 dark:text-red-400 rounded-xl">
+                  <Clock size={24} />
+                </div>
+                <div>
+                  <p className="text-xs font-black text-gray-400 uppercase tracking-widest">Payments Pending</p>
+                  <h3 className="text-2xl font-black dark:text-white">₹{totalPending.toLocaleString()}</h3>
                 </div>
               </div>
             </div>
 
-            {/* 🧾 Invoices Table */}
+            {/* 🧾 Tabs for Invoices and Quotations */}
             <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-sm border dark:border-gray-700 overflow-hidden">
-              <div className="p-6 border-b dark:border-gray-700 flex items-center justify-between">
-                <h2 className="text-lg font-black dark:text-white uppercase tracking-tight">Recent Invoices</h2>
+              <div className="p-6 border-b dark:border-gray-700">
+                <h2 className="text-lg font-black dark:text-white uppercase tracking-tight mb-4">Billing Records</h2>
+                <div className="flex gap-4">
+                  <button 
+                    onClick={() => setActiveTab('Invoice')}
+                    className={`px-4 py-2 rounded-lg text-sm font-bold transition-all ${
+                      activeTab === 'Invoice' 
+                        ? 'bg-blue-600 text-white shadow-lg shadow-blue-500/30' 
+                        : 'bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600'
+                    }`}
+                  >
+                    Invoices
+                  </button>
+                  <button 
+                    onClick={() => setActiveTab('Quotation')}
+                    className={`px-4 py-2 rounded-lg text-sm font-bold transition-all ${
+                      activeTab === 'Quotation' 
+                        ? 'bg-purple-600 text-white shadow-lg shadow-purple-500/30' 
+                        : 'bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600'
+                    }`}
+                  >
+                    Quotations
+                  </button>
+                </div>
               </div>
               <EntriesTable 
-                type="Invoice"
-                entries={invoices}
+                type={activeTab}
+                entries={activeTab === 'Invoice' ? invoices : quotations}
                 units={units}
                 userRole={userRole}
                 selectedUnit="All"
