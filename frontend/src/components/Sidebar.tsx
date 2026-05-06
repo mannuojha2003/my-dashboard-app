@@ -90,8 +90,7 @@ const Sidebar: React.FC<SidebarProps> = ({ onSelectMenu, onSelectUnit }) => {
         md:translate-x-0 md:static md:z-auto md:shadow-md
       `}>
         <div className="h-full flex flex-col p-4 overflow-y-auto">
-          <div className="flex items-center justify-between mb-8 md:mb-6">
-            <h2 className="text-xl font-black text-blue-600 dark:text-blue-400 tracking-tighter">ANTIGRAVITY</h2>
+          <div className="flex items-center justify-end mb-8 md:mb-6">
             <button 
               onClick={() => setIsOpen(false)}
               className="md:hidden p-2 text-gray-500 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-full"
