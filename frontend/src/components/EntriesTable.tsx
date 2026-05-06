@@ -453,6 +453,10 @@ export default function EntriesTable({ type, entries, units, userRole, selectedU
                             {row.status === 'Paid' ? <CheckCircle2 size={12} /> : <AlertCircle size={12} />}
                             {row.status || 'Unpaid'}
                           </button>
+                        ) : (key === 'client_name' && (type === 'Quotation' || type === 'Invoice')) ? (
+                          <span className="font-bold text-gray-700 dark:text-gray-200 whitespace-nowrap">
+                            {row.client_name || row.company_name || ''}
+                          </span>
                         ) : (
                           <span className="font-bold text-gray-700 dark:text-gray-200 whitespace-nowrap">
                             {/* @ts-ignore */}

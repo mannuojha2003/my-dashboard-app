@@ -10,6 +10,8 @@ interface DescriptionItem {
 export interface IEntry extends Document {
   type: 'Quotation' | 'Invoice' | 'Purchase' | 'Goods Exp' | 'Cash Exp';
   company_name?: string;
+  client_name?: string;
+  status?: string;
   quotation_no?: string;
   invoice_no?: string;
   reference_no?: string;
@@ -39,6 +41,8 @@ const EntrySchema = new Schema<IEntry>(
       required: true,
     },
     company_name: String,
+    client_name: String,
+    status: { type: String, default: 'Unpaid' },
     quotation_no: String,
     invoice_no: String,
     reference_no: String,

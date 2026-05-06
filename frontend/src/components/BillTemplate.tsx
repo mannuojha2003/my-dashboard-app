@@ -105,7 +105,7 @@ const BillTemplate = React.forwardRef<HTMLDivElement, BillTemplateProps>(({ entr
         <div>
           <p className="font-bold border-b border-black inline-block mb-2">To,</p>
           <div className="min-h-[60px] space-y-1">
-            <p className="font-bold">{entry.client_name || entry.buying_company || entry.selling_company || '___________________'}</p>
+            <p className="font-bold">{entry.client_name || entry.company_name || entry.buying_company || entry.selling_company || '___________________'}</p>
             {(() => {
               const unitDetails = units.find(u => u.name === entry.unit);
               if (unitDetails) {
