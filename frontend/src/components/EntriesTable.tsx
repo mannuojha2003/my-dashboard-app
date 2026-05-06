@@ -525,6 +525,7 @@ export default function EntriesTable({ type, entries, units, userRole, selectedU
           <BillTemplate 
             entry={printEntry} 
             company={printEntry.company_name || selectedUnit} 
+            units={units}
           />
         )}
       </div>

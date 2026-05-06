@@ -4,9 +4,10 @@ import { Entry, ItemRow } from '../types';
 interface BillTemplateProps {
   entry: Entry;
   company: string;
+  units?: any[];
 }
 
-const BillTemplate = React.forwardRef<HTMLDivElement, BillTemplateProps>(({ entry, company }, ref) => {
+const BillTemplate = React.forwardRef<HTMLDivElement, BillTemplateProps>(({ entry, company, units = [] }, ref) => {
   const getCompanyDetails = (name: string) => {
     switch (name) {
       case 'AT':
@@ -103,7 +104,21 @@ const BillTemplate = React.forwardRef<HTMLDivElement, BillTemplateProps>(({ entr
       <div className="grid grid-cols-2 gap-8 mb-8 text-sm">
         <div>
           <p className="font-bold border-b border-black inline-block mb-2">To,</p>
-          <div className="min-h-[60px]">{entry.client_name || entry.buying_company || entry.selling_company || '___________________'}</div>
+          <div className="min-h-[60px] space-y-1">
+            <p className="font-bold">{entry.client_name || entry.buying_company || entry.selling_company || '___________________'}</p>
+            {(() => {
+              const unitDetails = units.find(u => u.name === entry.unit);
+              if (unitDetails) {
+                return (
+                  <>
+                    <p>{unitDetails.address}</p>
+                    <p>PH: {unitDetails.contact}</p>
+                  </>
+                );
+              }
+              return null;
+            })()}
+          </div>
         </div>
         <div className="text-right space-y-1">
           <p><strong>Invoice No:</strong> {entry.invoice_no || entry.quotation_no || '___________'}</p>
